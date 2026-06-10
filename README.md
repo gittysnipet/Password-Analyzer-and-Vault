@@ -1,5 +1,7 @@
 # Password-Analyzer-and-Vault
 🔐 Client-side password analyzer, generator &amp; AES-256 encrypted vault — runs entirely in your browser. No server, no tracking, no account needed.
+<img width="1299" height="853" alt="image" src="https://github.com/user-attachments/assets/4ff15edf-d753-4afc-b5f0-8ee118696522" />
+
 
 # 🔐 VaultKey — Password Security Suite
 

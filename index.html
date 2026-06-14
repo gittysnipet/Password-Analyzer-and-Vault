@@ -3,78 +3,195 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VaultKey — Password Security Suite</title>
+<meta name="description" content="VaultKey — Enterprise-grade password intelligence and zero-knowledge credential management. Analyze, generate, and store passwords with AES-256 encryption, fully client-side.">
+<title>VaultKey — Enterprise Password Intelligence &amp; Secure Vault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
 :root{
-  --ink:#0d0f1a;--ink2:#13162a;--ink3:#181c30;
-  --plate:#1e2238;--plate2:#252a42;--plate3:#2c3050;
-  --edge:rgba(255,255,255,0.06);--edge2:rgba(255,255,255,0.11);--edge3:rgba(255,255,255,0.18);
-  --text:#dde0f0;--dim:#7d82a8;--hint:#3d4268;
-  --violet:#7c6af7;--violet2:#a89eff;--violet-glow:rgba(124,106,247,0.18);
-  --teal:#2dd4bf;--teal2:#5eead4;
-  --red:#f87171;--orange:#fb923c;--yellow:#facc15;--green:#4ade80;--emerald:#34d399;
-  --r:14px;--rs:9px;--rx:6px;
+  /* Brand palette per design spec */
+  --bg:#070b14;--surface:#0f172a;--card:#111827;
+  --primary:#7c6af7;--primary2:#a89eff;--primary-glow:rgba(124,106,247,0.18);
+  --secondary:#22d3ee;--secondary2:#67e8f9;
+  --success:#22c55e;--warning:#f59e0b;--danger:#ef4444;
+  --plate:#1a2236;--plate2:#212c45;--plate3:#283250;
+  --edge:rgba(255,255,255,0.07);--edge2:rgba(255,255,255,0.12);--edge3:rgba(255,255,255,0.2);
+  --text:#e7eaf6;--dim:#8993b8;--hint:#475173;
+  --r:16px;--rs:11px;--rx:7px;
   --mono:'JetBrains Mono',monospace;
   --sans:'Inter',system-ui,sans-serif;
+  --display:'Manrope',var(--sans);
+  /* legacy aliases mapped to new palette so existing component CSS keeps working */
+  --ink:var(--bg);--ink2:var(--surface);--ink3:var(--card);
+  --violet:var(--primary);--violet2:var(--primary2);--violet-glow:var(--primary-glow);
+  --teal:var(--secondary);--teal2:var(--secondary2);
+  --red:var(--danger);--orange:var(--warning);--yellow:#facc15;--green:var(--success);--emerald:#34d399;
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--ink);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+:focus-visible{outline:2px solid var(--secondary);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}}
 
 /* ── Ambient background ── */
 .ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.ambient::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,247,0.09) 0%,transparent 70%);top:-200px;left:-100px;animation:drift1 18s ease-in-out infinite alternate}
-.ambient::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,0.06) 0%,transparent 70%);bottom:-100px;right:-100px;animation:drift2 14s ease-in-out infinite alternate}
-@keyframes drift1{from{transform:translate(0,0)}to{transform:translate(60px,40px)}}
-@keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-40px,-30px)}}
-.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);background-size:52px 52px}
+.ambient::before{content:'';position:absolute;width:780px;height:780px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,247,0.12) 0%,transparent 70%);top:-280px;left:-120px;animation:drift1 22s ease-in-out infinite alternate}
+.ambient::after{content:'';position:absolute;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,0.08) 0%,transparent 70%);bottom:-160px;right:-120px;animation:drift2 18s ease-in-out infinite alternate}
+@keyframes drift1{from{transform:translate(0,0)}to{transform:translate(70px,50px)}}
+@keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-50px,-40px)}}
+.grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 30%,transparent 80%)}
 
-/* ── Layout ── */
-.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px 80px}
+/* ── Skip link ── */
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--primary);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:1000;font-size:13px;font-weight:600}
+.skip-link:focus{left:0}
 
-/* ── Header ── */
-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0 0}
-.nav-brand{display:flex;align-items:center;gap:11px}
-.brand-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--violet),#5b54cc);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 20px var(--violet-glow)}
-.brand-name{font-size:18px;font-weight:600;letter-spacing:-.3px}
-.brand-name span{color:var(--violet2)}
-.nav-tag{font-size:10px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--violet2);padding:4px 10px;border-radius:99px;border:1px solid rgba(124,106,247,0.3);background:rgba(124,106,247,0.08)}
+/* ── Layout containers ── */
+.shell{position:relative;z-index:1}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px 80px}
+.wide{max-width:1240px;margin:0 auto;padding:0 24px}
 
-/* ── Hero ── */
-.hero{padding:60px 0 44px;text-align:center;position:relative}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:20px;padding:5px 14px;border:1px solid rgba(45,212,191,0.2);border-radius:99px;background:rgba(45,212,191,0.06)}
-.hero-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.hero h1{font-size:clamp(34px,5vw,60px);font-weight:600;line-height:1.08;letter-spacing:-.8px;margin-bottom:16px;color:#fff}
-.hero h1 .hl{color:transparent;background:linear-gradient(135deg,var(--violet2),var(--teal2));-webkit-background-clip:text;background-clip:text}
-.hero-sub{font-size:15px;color:var(--dim);max-width:460px;margin:0 auto 32px;line-height:1.7;font-weight:300}
-.hero-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+/* ══════════════════════════ NAVBAR ══════════════════════════ */
+.navbar{position:sticky;top:0;z-index:100;width:100%}
+.navbar-inner{max-width:1240px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;transition:all .3s ease}
+.navbar.scrolled .navbar-inner{background:rgba(7,11,20,0.72);backdrop-filter:blur(16px) saturate(140%);border:1px solid var(--edge);border-radius:16px;margin-top:10px;box-shadow:0 8px 32px rgba(0,0,0,0.35)}
+.nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit}
+.brand-mark{width:38px;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 14px var(--primary-glow))}
+.brand-name{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-.3px;color:#fff}
+.brand-name span{color:var(--primary2)}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{color:var(--dim);text-decoration:none;font-size:13.5px;font-weight:500;transition:color .18s;position:relative}
+.nav-links a:hover{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-toggle{display:none}
+@media(max-width:860px){
+  .nav-links{display:none}
+}
 
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;padding:11px 22px;border-radius:var(--rs);border:none;cursor:pointer;transition:all .18s;font-family:var(--sans);letter-spacing:.1px}
-.btn-primary{background:var(--violet);color:#fff;box-shadow:0 0 24px rgba(124,106,247,0.3)}
-.btn-primary:hover{background:#6b5ae0;transform:translateY(-1px);box-shadow:0 0 30px rgba(124,106,247,0.4)}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--edge2)}
-.btn-ghost:hover{background:var(--plate);border-color:var(--violet);color:var(--violet2)}
-.btn-teal{background:rgba(45,212,191,0.12);color:var(--teal2);border:1px solid rgba(45,212,191,0.2)}
-.btn-teal:hover{background:rgba(45,212,191,0.2)}
-.btn-sm{padding:7px 13px;font-size:11px;border-radius:var(--rx)}
-.btn-icon{width:30px;height:30px;padding:0;justify-content:center;border-radius:var(--rx);background:var(--plate);border:1px solid var(--edge);color:var(--dim);font-size:13px}
+/* ══════════════════════════ BUTTONS ══════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;padding:12px 24px;border-radius:var(--rs);border:none;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.2,1);font-family:var(--sans);letter-spacing:.1px;position:relative;overflow:hidden;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#6555e0);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,0.06) inset,0 6px 20px rgba(124,106,247,0.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,0.1) inset,0 10px 28px rgba(124,106,247,0.45)}
+.btn-ghost{background:rgba(255,255,255,0.03);color:var(--text);border:1px solid var(--edge2)}
+.btn-ghost:hover{background:var(--plate);border-color:var(--primary);color:var(--primary2)}
+.btn-teal{background:rgba(34,211,238,0.1);color:var(--secondary2);border:1px solid rgba(34,211,238,0.22)}
+.btn-teal:hover{background:rgba(34,211,238,0.18)}
+.btn-sm{padding:8px 14px;font-size:11.5px}
+.btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:var(--rx);background:var(--plate);border:1px solid var(--edge);color:var(--dim);font-size:13px}
 .btn-icon:hover{color:var(--text);background:var(--plate2);border-color:var(--edge2)}
-.btn-icon.danger:hover{color:var(--red)}
+.btn-icon.danger:hover{color:var(--danger)}
 
-/* ── Trust bar ── */
-.trust-bar{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;padding:14px 0 0}
-.trust-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
-.trust-dot{width:5px;height:5px;border-radius:50%;background:var(--teal)}
+/* Ripple effect */
+.btn .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.35);transform:scale(0);animation:rippleAnim .6s ease-out;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(3.5);opacity:0}}
 
-/* ── Tab navigation ── */
+/* ══════════════════════════ HERO ══════════════════════════ */
+.hero-section{position:relative;padding:92px 0 70px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr;text-align:center}}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--secondary2);margin-bottom:24px;padding:6px 16px;border:1px solid rgba(34,211,238,0.22);border-radius:99px;background:rgba(34,211,238,0.06)}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--secondary);animation:pulse 2s infinite;box-shadow:0 0 8px var(--secondary)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+.hero-section h1{font-family:var(--display);font-size:clamp(36px,5.2vw,62px);font-weight:800;line-height:1.08;letter-spacing:-1.2px;margin-bottom:20px;color:#fff}
+.hero-section h1 .hl{color:transparent;background:linear-gradient(135deg,var(--primary2),var(--secondary2));-webkit-background-clip:text;background-clip:text}
+.hero-sub{font-size:16px;color:var(--dim);max-width:480px;margin-bottom:36px;line-height:1.75;font-weight:300}
+@media(max-width:980px){.hero-sub{margin:0 auto 36px}}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+@media(max-width:980px){.hero-cta{justify-content:center}}
+
+/* Floating security dashboard preview */
+.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;min-height:380px}
+.dash-preview{width:100%;max-width:420px;background:linear-gradient(160deg,var(--surface),var(--card));border:1px solid var(--edge2);border-radius:18px;padding:22px;box-shadow:0 30px 70px -20px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.02) inset;position:relative;animation:floatMain 7s ease-in-out infinite}
+@keyframes floatMain{0%,100%{transform:translateY(0px) rotate(-1deg)}50%{transform:translateY(-12px) rotate(0.5deg)}}
+.dash-preview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.dash-dot-row{display:flex;gap:6px}
+.dash-dot{width:8px;height:8px;border-radius:50%}
+.dash-dot.r{background:var(--danger)}.dash-dot.y{background:var(--warning)}.dash-dot.g{background:var(--success)}
+.dash-title{font-family:var(--mono);font-size:11px;color:var(--hint)}
+.dash-score-row{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.dash-ring{position:relative;width:74px;height:74px;flex-shrink:0}
+.dash-ring svg{transform:rotate(-90deg)}
+.dash-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dash-ring-label b{font-family:var(--mono);font-size:18px;color:#fff;line-height:1}
+.dash-ring-label small{font-size:8px;color:var(--hint);letter-spacing:1px}
+.dash-score-info b{display:block;font-size:14px;color:#fff;margin-bottom:4px;font-family:var(--display)}
+.dash-score-info span{font-size:11.5px;color:var(--dim);line-height:1.5}
+.dash-bars{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.dash-bar-row{display:flex;align-items:center;gap:10px}
+.dash-bar-label{font-size:10.5px;color:var(--hint);width:88px;flex-shrink:0;text-transform:uppercase;letter-spacing:.6px}
+.dash-bar-track{flex:1;height:5px;border-radius:3px;background:var(--plate);overflow:hidden}
+.dash-bar-fill{height:100%;border-radius:3px;animation:fillBar 1.6s ease-out forwards;transform-origin:left;animation-fill-mode:both}
+@keyframes fillBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.dash-chips{display:flex;gap:6px;flex-wrap:wrap}
+.dash-chip{font-size:10px;font-weight:600;padding:5px 10px;border-radius:99px;border:1px solid var(--edge2);color:var(--dim);font-family:var(--mono)}
+
+/* Floating security cards around dashboard */
+.float-card{position:absolute;background:var(--card);border:1px solid var(--edge2);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:9px;box-shadow:0 16px 40px -12px rgba(0,0,0,0.55);font-size:12px;font-weight:600;color:var(--text);animation:floatCard 6s ease-in-out infinite}
+.float-card .fc-ic{font-size:16px;line-height:1}
+.float-card.fc1{top:-18px;right:-28px;animation-delay:.2s}
+.float-card.fc2{bottom:14px;left:-36px;animation-delay:1.4s}
+.float-card.fc3{bottom:-22px;right:30px;animation-delay:2.6s}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@media(max-width:540px){.float-card{display:none}}
+
+/* ══════════════════════════ TRUST STRIP ══════════════════════════ */
+.trust-section{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);background:rgba(255,255,255,0.012);padding:22px 0}
+.trust-row{display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
+.trust-badge{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--dim);font-weight:500;opacity:0;animation:badgeIn .6s ease forwards}
+.trust-badge:nth-child(1){animation-delay:.05s}.trust-badge:nth-child(2){animation-delay:.15s}.trust-badge:nth-child(3){animation-delay:.25s}.trust-badge:nth-child(4){animation-delay:.35s}.trust-badge:nth-child(5){animation-delay:.45s}
+@keyframes badgeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.trust-ic{width:28px;height:28px;border-radius:8px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.18);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+
+/* ══════════════════════════ SECTION HEADERS ══════════════════════════ */
+.section{padding:84px 0}
+.section-tight{padding:64px 0 84px}
+.section-head{text-align:center;max-width:620px;margin:0 auto 48px}
+.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary2);margin-bottom:12px}
+.section-head h2{font-family:var(--display);font-size:clamp(26px,3.4vw,38px);font-weight:800;letter-spacing:-.6px;color:#fff;margin-bottom:12px;line-height:1.2}
+.section-head p{font-size:14.5px;color:var(--dim);line-height:1.7}
+
+/* Reveal on scroll */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ══════════════════════════ SECURITY METRICS DASHBOARD (live) ══════════════════════════ */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.metrics-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.metrics-grid{grid-template-columns:1fr}}
+.metric-card{background:linear-gradient(160deg,var(--surface),var(--card));border:1px solid var(--edge);border-radius:var(--r);padding:22px;position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
+.metric-card:hover{border-color:var(--edge2);transform:translateY(-3px)}
+.metric-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:.5}
+.metric-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.metric-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.2)}
+.metric-live{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--success);text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.metric-live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+.metric-val{font-family:var(--mono);font-size:28px;font-weight:600;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:-.5px}
+.metric-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--hint)}
+
+/* ══════════════════════════ FEATURE CARDS ══════════════════════════ */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:900px){.feature-grid{grid-template-columns:1fr}}
+.feature-card{background:var(--card);border:1px solid var(--edge);border-radius:var(--r);padding:28px;transition:all .3s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden;cursor:pointer}
+.feature-card:hover{transform:translateY(-5px);border-color:rgba(124,106,247,0.3);box-shadow:0 20px 50px -20px rgba(124,106,247,0.25)}
+.feature-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(124,106,247,0.08),transparent 60%);opacity:0;transition:opacity .3s}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;background:linear-gradient(135deg,rgba(124,106,247,0.18),rgba(34,211,238,0.1));border:1px solid rgba(124,106,247,0.22);transition:transform .3s}
+.feature-card:hover .feature-icon{transform:scale(1.08) rotate(-4deg)}
+.feature-card h3{font-family:var(--display);font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-.2px}
+.feature-card>p{font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:16px}
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.feature-list li{font-size:12.5px;color:var(--dim);display:flex;align-items:center;gap:9px}
+.feature-list li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--secondary);flex-shrink:0;box-shadow:0 0 6px rgba(34,211,238,0.5)}
+.feature-cta{margin-top:18px;font-size:12.5px;font-weight:600;color:var(--primary2);display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--sans);padding:0;transition:gap .2s}
+.feature-cta:hover{gap:10px}
+
+/* ══════════════════════════ TAB NAVIGATION (app) ══════════════════════════ */
+.app-anchor{padding-top:10px}
 .tabs-wrap{display:flex;justify-content:center;margin-bottom:28px}
-.tabs{display:inline-flex;gap:2px;background:var(--ink3);border:1px solid var(--edge);border-radius:var(--r);padding:4px}
-.tab{display:flex;align-items:center;gap:7px;padding:9px 22px;border-radius:11px;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--dim);background:transparent;transition:all .2s;font-family:var(--sans);white-space:nowrap}
+.tabs{display:inline-flex;gap:2px;background:var(--surface);border:1px solid var(--edge);border-radius:var(--r);padding:4px}
+.tab{display:flex;align-items:center;gap:7px;padding:10px 24px;border-radius:11px;border:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--dim);background:transparent;transition:all .2s;font-family:var(--sans);white-space:nowrap}
 .tab .tab-ic{font-size:15px}
 .tab.on{background:var(--plate2);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,0.3)}
 .tab:hover:not(.on){color:var(--text);background:rgba(255,255,255,0.04)}
@@ -84,15 +201,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── Cards ── */
-.card{background:var(--ink3);border:1px solid var(--edge);border-radius:var(--r);padding:24px;position:relative}
-.card-glow::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,106,247,0.4),rgba(45,212,191,0.3),transparent);border-radius:var(--r) var(--r) 0 0}
-.card-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--hint);margin-bottom:18px;display:flex;align-items:center;gap:9px}
+.card{background:var(--surface);border:1px solid var(--edge);border-radius:var(--r);padding:24px;position:relative}
+.card-glow::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,106,247,0.4),rgba(34,211,238,0.3),transparent);border-radius:var(--r) var(--r) 0 0}
+.card-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--hint);margin-bottom:18px;display:flex;align-items:center;gap:9px}
 .card-label::after{content:'';flex:1;height:1px;background:var(--edge)}
 
 /* ── Password input ── */
 .pw-field{position:relative;margin-bottom:8px}
 .pw-input{width:100%;padding:15px 52px 15px 20px;background:var(--plate);border:1px solid var(--edge2);border-radius:var(--rs);color:#fff;font-family:var(--mono);font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;letter-spacing:.8px}
-.pw-input:focus{border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-glow)}
+.pw-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
 .pw-input::placeholder{font-family:var(--sans);font-size:13px;letter-spacing:0;color:var(--hint)}
 .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--dim);font-size:16px;transition:color .2s;padding:0;line-height:1}
 .pw-toggle:hover{color:var(--text)}
@@ -100,14 +217,14 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0
 /* ── Strength bar ── */
 .str-bars{display:flex;gap:5px;margin:12px 0 5px}
 .str-bar{flex:1;height:3px;border-radius:2px;background:var(--plate3);transition:background .4s,transform .2s}
-.str-bar.on-vw{background:var(--red)}
-.str-bar.on-wk{background:var(--orange)}
+.str-bar.on-vw{background:var(--danger)}
+.str-bar.on-wk{background:var(--warning)}
 .str-bar.on-fr{background:var(--yellow)}
-.str-bar.on-st{background:var(--green)}
+.str-bar.on-st{background:var(--success)}
 .str-bar.on-vs{background:var(--emerald);box-shadow:0 0 6px rgba(52,211,153,0.4)}
 .str-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px}
 .str-label{font-weight:600;transition:color .3s}
-.str-label.c-vw{color:var(--red)}.str-label.c-wk{color:var(--orange)}.str-label.c-fr{color:var(--yellow)}.str-label.c-st{color:var(--green)}.str-label.c-vs{color:var(--emerald)}
+.str-label.c-vw{color:var(--danger)}.str-label.c-wk{color:var(--warning)}.str-label.c-fr{color:var(--yellow)}.str-label.c-st{color:var(--success)}.str-label.c-vs{color:var(--emerald)}
 .str-ent{color:var(--dim);font-family:var(--mono);font-size:10px}
 
 /* ── Analyzer layout ── */
@@ -122,7 +239,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0
 /* ── Stat chips ── */
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
 .stat{background:var(--plate);border:1px solid var(--edge);border-radius:var(--rs);padding:12px 14px;text-align:center}
-.stat-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--violet2);line-height:1;margin-bottom:4px}
+.stat-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--primary2);line-height:1;margin-bottom:4px}
 .stat-key{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--hint)}
 
 /* ── Crack time ── */
@@ -142,13 +259,23 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0
 
 /* ── Suggestions ── */
 .sugg-list{display:flex;flex-direction:column;gap:5px;margin-top:4px}
-.sugg-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--dim);padding:8px 12px;border-left:2px solid var(--violet);background:rgba(124,106,247,0.05);border-radius:0 var(--rx) var(--rx) 0;line-height:1.5}
-.sugg-item::before{content:'→';color:var(--violet);flex-shrink:0;margin-top:1px}
+.sugg-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--dim);padding:8px 12px;border-left:2px solid var(--primary);background:rgba(124,106,247,0.05);border-radius:0 var(--rx) var(--rx) 0;line-height:1.5}
+.sugg-item::before{content:'→';color:var(--primary);flex-shrink:0;margin-top:1px}
+
+/* ── Attack simulation panel ── */
+.attack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+@media(max-width:700px){.attack-grid{grid-template-columns:repeat(2,1fr)}}
+.attack-card{background:var(--plate);border:1px solid var(--edge);border-radius:var(--rs);padding:14px;text-align:center}
+.attack-ic{font-size:18px;margin-bottom:8px}
+.attack-name{font-size:10.5px;font-weight:600;color:var(--text);margin-bottom:8px;letter-spacing:.2px}
+.attack-bar-track{height:5px;border-radius:3px;background:var(--plate3);overflow:hidden;margin-bottom:6px}
+.attack-bar-fill{height:100%;border-radius:3px;transition:width .5s ease,background .3s ease}
+.attack-resist{font-size:9.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.3px}
 
 /* ── Info cards ── */
 .info-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px}
 @media(max-width:640px){.info-strip{grid-template-columns:1fr}}
-.info-card{background:var(--ink3);border:1px solid var(--edge);border-radius:var(--r);padding:20px}
+.info-card{background:var(--surface);border:1px solid var(--edge);border-radius:var(--r);padding:20px}
 .info-ic{font-size:22px;margin-bottom:10px}
 .info-card h4{font-size:13px;font-weight:600;margin-bottom:6px}
 .info-card p{font-size:12px;color:var(--dim);line-height:1.65}
@@ -158,10 +285,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0
 @media(max-width:700px){.gen-layout{grid-template-columns:1fr}}
 .slider-wrap{margin-bottom:18px}
 .slider-label{font-size:11px;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:9px}
-.slider-label span{font-family:var(--mono);color:var(--violet2);font-size:12px}
+.slider-label span{font-family:var(--mono);color:var(--primary2);font-size:12px}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:2px;background:var(--plate3);outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--violet);cursor:pointer;box-shadow:0 0 8px var(--violet-glow);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--primary);cursor:pointer;box-shadow:0 0 8px var(--primary-glow);transition:transform .15s}
 input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--primary);cursor:pointer}
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--plate);border-radius:var(--rx);border:1px solid var(--edge);margin-bottom:5px;cursor:pointer;transition:border-color .2s}
 .toggle-row:hover{border-color:var(--edge2)}
 .toggle-row label{font-size:13px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:7px}
@@ -170,19 +298,27 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
 .tog input{opacity:0;width:0;height:0}
 .tog-slider{position:absolute;inset:0;cursor:pointer;background:var(--plate3);border-radius:9px;transition:.2s}
 .tog-slider::before{content:'';position:absolute;width:12px;height:12px;border-radius:50%;left:3px;top:3px;background:var(--dim);transition:.2s}
-.tog input:checked+.tog-slider{background:var(--violet)}
+.tog input:checked+.tog-slider{background:var(--primary)}
 .tog input:checked+.tog-slider::before{transform:translateX(14px);background:#fff}
-.gen-output{position:relative;background:var(--plate);border:1px solid var(--edge2);border-radius:var(--rs);padding:18px 52px 18px 18px;font-family:var(--mono);font-size:14px;letter-spacing:1.5px;color:var(--violet2);min-height:58px;word-break:break-all;line-height:1.6;transition:border-color .2s}
+.gen-output{position:relative;background:var(--plate);border:1px solid var(--edge2);border-radius:var(--rs);padding:18px 52px 18px 18px;font-family:var(--mono);font-size:14px;letter-spacing:1.5px;color:var(--primary2);min-height:58px;word-break:break-all;line-height:1.6;transition:border-color .2s}
 .gen-output:hover{border-color:var(--edge3)}
 .gen-copy{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--plate2);border:1px solid var(--edge2);border-radius:var(--rx);color:var(--dim);font-size:11px;font-weight:500;padding:5px 10px;cursor:pointer;transition:all .2s;font-family:var(--sans)}
-.gen-copy:hover{color:var(--text);border-color:var(--violet);background:rgba(124,106,247,0.1)}
+.gen-copy:hover{color:var(--text);border-color:var(--primary);background:rgba(124,106,247,0.1)}
 .gen-copy.copied{color:var(--emerald);border-color:rgba(52,211,153,0.35)}
+
+/* ── Generator history ── */
+.gen-history{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.gen-hist-item{display:flex;align-items:center;gap:10px;background:var(--plate);border:1px solid var(--edge);border-radius:var(--rx);padding:9px 12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);transition:border-color .2s}
+.gen-hist-item:hover{border-color:var(--edge2)}
+.gen-hist-pw{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.gen-hist-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.gen-hist-empty{font-size:12px;color:var(--hint);text-align:center;padding:14px 0}
 
 /* ── Vault lock screen ── */
 .vault-lock{max-width:400px;margin:0 auto}
 .vault-hero{text-align:center;padding:8px 0 28px}
 .vault-icon{width:70px;height:70px;margin:0 auto 18px;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 30px rgba(124,106,247,0.1)}
-.vault-hero h2{font-size:24px;font-weight:600;margin-bottom:8px;color:#fff}
+.vault-hero h2{font-family:var(--display);font-size:24px;font-weight:700;margin-bottom:8px;color:#fff}
 .vault-hero p{font-size:13px;color:var(--dim);line-height:1.65}
 .mode-tabs{display:flex;gap:3px;background:var(--plate);border-radius:var(--rs);padding:3px;margin:20px 0}
 .mode-tab{flex:1;padding:8px;border-radius:var(--rx);border:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--dim);background:transparent;transition:all .2s;font-family:var(--sans)}
@@ -192,45 +328,65 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
 .form-group{margin-bottom:12px}
 .form-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--hint);display:block;margin-bottom:6px}
 .form-input{width:100%;padding:11px 14px;background:var(--plate);border:1px solid var(--edge2);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s}
-.form-input:focus{border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-glow)}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
 .form-input::placeholder{color:var(--hint)}
 .pw-group{position:relative}
 .pw-group .form-input{padding-right:44px}
-.form-error{font-size:12px;color:var(--red);background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);border-radius:var(--rx);padding:8px 12px;margin-bottom:10px;display:none}
+.form-error{font-size:12px;color:var(--danger);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.18);border-radius:var(--rx);padding:8px 12px;margin-bottom:10px;display:none}
 .form-error.show{display:block}
 
 /* ── Vault ID display ── */
 .vault-id-box{background:var(--plate);border:1px solid rgba(124,106,247,0.25);border-radius:var(--rs);padding:12px 14px;margin:12px 0;display:flex;align-items:center;gap:10px}
 .vault-id-inner{flex:1}
 .vault-id-lbl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--hint);margin-bottom:3px}
-.vault-id-val{font-family:var(--mono);font-size:12px;color:var(--violet2);word-break:break-all}
-.vault-id-warn{font-size:11px;color:rgba(251,146,60,0.85);display:flex;align-items:flex-start;gap:6px;margin-top:6px;line-height:1.5}
+.vault-id-val{font-family:var(--mono);font-size:12px;color:var(--primary2);word-break:break-all}
+.vault-id-warn{font-size:11px;color:rgba(245,158,11,0.85);display:flex;align-items:flex-start;gap:6px;margin-top:6px;line-height:1.5}
+
+/* ── Vault overview ── */
+.vault-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:640px){.vault-overview{grid-template-columns:repeat(2,1fr)}}
+.vo-card{background:var(--plate);border:1px solid var(--edge);border-radius:var(--rs);padding:14px;text-align:center}
+.vo-val{font-family:var(--mono);font-size:22px;font-weight:600;color:#fff;line-height:1;margin-bottom:4px}
+.vo-val.c-success{color:var(--success)}.vo-val.c-danger{color:var(--danger)}
+.vo-label{font-size:9.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--hint)}
+
+/* ── Vault insights ── */
+.insights-panel{margin-bottom:16px}
+.insight-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--edge);font-size:12.5px}
+.insight-row:last-child{border-bottom:none}
+.insight-ic{font-size:15px;flex-shrink:0}
+.insight-text{flex:1;color:var(--dim)}
+.insight-text b{color:var(--text);font-weight:600}
+.insight-empty{font-size:12px;color:var(--hint);text-align:center;padding:10px 0}
 
 /* ── Vault dashboard ── */
 .vault-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
 .vault-title{display:flex;align-items:center;gap:12px}
-.vault-title-text{font-size:20px;font-weight:600;color:#fff;line-height:1}
+.vault-title-text{font-family:var(--display);font-size:20px;font-weight:700;color:#fff;line-height:1}
 .vault-meta{font-size:11px;color:var(--dim);margin-top:3px}
 .vault-actions{display:flex;gap:7px}
-.search-wrap{position:relative;margin-bottom:14px}
+.search-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px}
 .search-input{width:100%;padding:11px 14px 11px 40px;background:var(--plate);border:1px solid var(--edge2);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .2s}
-.search-input:focus{border-color:var(--violet)}
+.search-input:focus{border-color:var(--primary)}
 .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:14px;pointer-events:none}
+.sort-select{padding:11px 14px;background:var(--plate);border:1px solid var(--edge2);border-radius:var(--rs);color:var(--text);font-family:var(--sans);font-size:12.5px;outline:none;cursor:pointer;transition:border-color .2s}
+.sort-select:focus{border-color:var(--primary)}
 
 /* ── Entry list ── */
 .entry-list{display:flex;flex-direction:column;gap:6px}
 .entry{background:var(--plate);border:1px solid var(--edge);border-radius:var(--rs);padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .18s;position:relative}
 .entry::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:var(--rs) 0 0 var(--rs);background:transparent;transition:background .2s}
 .entry:hover{border-color:var(--edge2);background:var(--plate2)}
-.entry:hover::before{background:var(--violet)}
-.entry-ico{width:38px;height:38px;flex-shrink:0;background:var(--ink3);border:1px solid var(--edge);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;font-size:18px}
+.entry:hover::before{background:var(--primary)}
+.entry-ico{width:38px;height:38px;flex-shrink:0;background:var(--surface);border:1px solid var(--edge);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;font-size:18px}
 .entry-body{flex:1;min-width:0}
 .entry-site{font-size:14px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .entry-user{font-size:11px;color:var(--dim);margin-top:1px;font-family:var(--mono)}
 .entry-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .str-badge{display:flex;align-items:center;gap:5px}
 .str-dot{width:6px;height:6px;border-radius:50%}
-.str-dot.c-vw{background:var(--red)}.str-dot.c-wk{background:var(--orange)}.str-dot.c-fr{background:var(--yellow)}.str-dot.c-st{background:var(--green)}.str-dot.c-vs{background:var(--emerald);box-shadow:0 0 5px rgba(52,211,153,0.5)}
+.str-dot.c-vw{background:var(--danger)}.str-dot.c-wk{background:var(--warning)}.str-dot.c-fr{background:var(--yellow)}.str-dot.c-st{background:var(--success)}.str-dot.c-vs{background:var(--emerald);box-shadow:0 0 5px rgba(52,211,153,0.5)}
 .str-badge-lbl{font-size:10px;color:var(--dim)}
 .entry-btns{display:flex;gap:4px;opacity:0;transition:opacity .18s}
 .entry:hover .entry-btns{opacity:1}
@@ -242,279 +398,599 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
 /* ── Modals ── */
 .overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
 .overlay.open{display:flex}
-.modal{background:var(--ink3);border:1px solid var(--edge2);border-radius:var(--r);padding:26px;width:100%;max-width:440px;animation:modalIn .22s ease;position:relative;overflow:hidden}
-.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--violet),transparent)}
+.modal{background:var(--surface);border:1px solid var(--edge2);border-radius:var(--r);padding:26px;width:100%;max-width:440px;animation:modalIn .22s ease;position:relative;overflow:hidden;max-height:90vh;overflow-y:auto}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent)}
 @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.modal-title{font-size:17px;font-weight:600;color:#fff}
+.modal-title{font-family:var(--display);font-size:17px;font-weight:700;color:#fff}
 .modal-close{width:26px;height:26px;border-radius:6px;border:1px solid var(--edge2);background:var(--plate);color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .18s}
 .modal-close:hover{background:var(--plate2);color:var(--text);border-color:var(--edge3)}
 .icon-picker{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
 .icon-opt{width:34px;height:34px;border-radius:var(--rx);background:var(--plate);border:1px solid var(--edge);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .14s}
-.icon-opt:hover,.icon-opt.sel{border-color:var(--violet);background:var(--violet-glow)}
+.icon-opt:hover,.icon-opt.sel{border-color:var(--primary);background:var(--primary-glow)}
 .hidden{display:none}
 
 /* ── Toast ── */
 .toast{position:fixed;bottom:22px;right:22px;z-index:300;background:var(--plate2);border:1px solid var(--edge2);border-radius:var(--rs);padding:11px 17px;font-size:12px;box-shadow:0 8px 28px rgba(0,0,0,0.4);transform:translateY(70px);opacity:0;transition:all .28s cubic-bezier(.34,1.56,.64,1);pointer-events:none;display:flex;align-items:center;gap:8px}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{border-color:rgba(52,211,153,0.3);color:var(--emerald)}
-.toast.er{border-color:rgba(248,113,113,0.3);color:var(--red)}
+.toast.er{border-color:rgba(239,68,68,0.3);color:var(--danger)}
 
 /* ── Master pw strength in vault ── */
 .mpw-str{margin-top:8px}
 
-/* ── Footer ── */
-footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--edge);margin-top:60px}
-footer p{font-size:11px;color:var(--hint);line-height:1.9}
-footer .ft-chips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-footer .ft-chip{font-size:10px;padding:3px 9px;border-radius:99px;background:var(--plate);border:1px solid var(--edge);color:var(--dim)}
+/* ══════════════════════════ FAQ ══════════════════════════ */
+.faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.faq-item{background:var(--card);border:1px solid var(--edge);border-radius:var(--rs);overflow:hidden;transition:border-color .2s}
+.faq-item.open{border-color:rgba(124,106,247,0.3)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px;background:none;border:none;cursor:pointer;font-family:var(--sans);font-size:14.5px;font-weight:600;color:var(--text);text-align:left;transition:color .2s}
+.faq-q:hover{color:var(--primary2)}
+.faq-icon{flex-shrink:0;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--plate);color:var(--dim);font-size:14px;transition:transform .3s,background .2s,color .2s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--primary-glow);color:var(--primary2)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a-inner{padding:0 22px 20px;font-size:13.5px;color:var(--dim);line-height:1.75}
+
+/* ══════════════════════════ FOOTER ══════════════════════════ */
+.site-footer{border-top:1px solid var(--edge);padding:64px 0 0;margin-top:40px;background:linear-gradient(180deg,transparent,rgba(124,106,247,0.025))}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
+.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.footer-brand .brand-name{font-size:17px}
+.footer-about{font-size:12.5px;color:var(--dim);line-height:1.75;max-width:280px}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--hint);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.footer-col a{font-size:13px;color:var(--dim);text-decoration:none;transition:color .18s}
+.footer-col a:hover{color:var(--primary2)}
+.footer-bottom{border-top:1px solid var(--edge);padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:12px;color:var(--hint)}
+.footer-chips{display:flex;flex-wrap:wrap;gap:8px}
+.footer-chip{font-size:10px;padding:4px 10px;border-radius:99px;background:var(--plate);border:1px solid var(--edge);color:var(--dim);font-family:var(--mono)}
 
 /* ── Responsive ── */
 @media(max-width:480px){
   .tab{padding:8px 12px;font-size:12px}
-  .trust-bar{gap:16px}
   .stat-row{grid-template-columns:1fr 1fr}
   .modal{padding:18px}
+  .hero-section{padding:60px 0 44px}
+  .section{padding:56px 0}
+  .attack-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
-<div class="ambient"></div>
-<div class="grid-lines"></div>
+<a href="#main" class="skip-link">Skip to main content</a>
+<div class="ambient" aria-hidden="true"></div>
+<div class="grid-lines" aria-hidden="true"></div>
 
-<div class="wrap">
-  <nav>
-    <div class="nav-brand">
-      <div class="brand-mark">🔐</div>
-      <div class="brand-name">Vault<span>Key</span></div>
-    </div>
-    <span class="nav-tag">Zero-server security</span>
-  </nav>
+<div class="shell">
 
-  <div class="hero">
-    <div class="hero-eyebrow">Client-side · No tracking · Open source</div>
-    <h1>Your passwords,<br><span class="hl">engineered safe.</span></h1>
-    <p class="hero-sub">Analyze entropy, generate cryptographically strong passwords, and store them in an AES-256 vault — all computed in your browser. Nothing reaches a server.</p>
-    <div class="hero-cta">
-      <button class="btn btn-primary" onclick="sw('analyzer')">Analyze a password</button>
-      <button class="btn btn-ghost" onclick="sw('vault')">Open my vault</button>
-    </div>
-    <div class="trust-bar">
-      <div class="trust-item"><span class="trust-dot"></span>AES-256-GCM encryption</div>
-      <div class="trust-item"><span class="trust-dot"></span>PBKDF2 · 480k iterations</div>
-      <div class="trust-item"><span class="trust-dot"></span>WebCrypto API</div>
-      <div class="trust-item"><span class="trust-dot"></span>Saved in localStorage only</div>
-    </div>
-  </div>
-
-  <div class="tabs-wrap">
-    <div class="tabs">
-      <button class="tab on" data-t="analyzer" onclick="sw('analyzer')"><span class="tab-ic">🔍</span> Analyzer</button>
-      <button class="tab" data-t="generator" onclick="sw('generator')"><span class="tab-ic">⚡</span> Generator</button>
-      <button class="tab" data-t="vault" onclick="sw('vault')"><span class="tab-ic">🔒</span> Vault</button>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════ ANALYZER ═══════════════════════ -->
-  <div class="pane on" id="p-analyzer">
-    <div class="card card-glow" style="margin-bottom:14px">
-      <div class="card-label">Enter a password to analyze</div>
-      <div class="pw-field">
-        <input type="password" class="pw-input" id="pwIn" placeholder="Type or paste a password…" autocomplete="off" spellcheck="false" oninput="onPwIn(this.value)">
-        <button class="pw-toggle" id="eyeA" onclick="togVis('pwIn','eyeA')">👁</button>
+  <!-- ══════════════════════ NAVBAR ══════════════════════ -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#main" class="nav-brand" aria-label="VaultKey home">
+        <svg class="brand-mark" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VaultKey logo">
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7c6af7"/>
+              <stop offset="100%" stop-color="#22d3ee"/>
+            </linearGradient>
+          </defs>
+          <path d="M19 2 L34 8 V18 C34 27 27 33.5 19 36 C11 33.5 4 27 4 18 V8 Z" fill="url(#logoGrad)" opacity="0.16"/>
+          <path d="M19 2 L34 8 V18 C34 27 27 33.5 19 36 C11 33.5 4 27 4 18 V8 Z" stroke="url(#logoGrad)" stroke-width="1.6" fill="none"/>
+          <circle cx="19" cy="16.5" r="5" fill="none" stroke="url(#logoGrad)" stroke-width="1.8"/>
+          <path d="M19 21 L19 27" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M19 24 L22.5 24" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M19 27 L21.5 27" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Vault<span>Key</span></span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#security">Security</a></li>
+          <li><a href="#vault" onclick="sw('vault')">Vault</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
+      <div class="nav-right">
+        <button class="btn btn-primary btn-sm" onclick="rippleClick(event);document.getElementById('app').scrollIntoView({behavior:'smooth'})">Get Started</button>
       </div>
-      <div class="str-bars"><div class="str-bar" id="a1"></div><div class="str-bar" id="a2"></div><div class="str-bar" id="a3"></div><div class="str-bar" id="a4"></div><div class="str-bar" id="a5"></div></div>
-      <div class="str-meta"><span class="str-label" id="sLblA">Start typing above</span><span class="str-ent" id="entA"></span></div>
     </div>
+  </header>
 
-    <div class="a-grid">
-      <div>
-        <div class="crack-card" id="crackCard">
-          <div class="crack-icon" id="crackIc">⏱</div>
+  <main id="main">
+    <div class="wide">
+      <!-- ══════════════════════ HERO ══════════════════════ -->
+      <section class="hero-section">
+        <div class="hero-grid">
           <div>
-            <div class="crack-time" id="crackT">—</div>
-            <div class="crack-sub">Time to crack at 10 billion guesses / sec</div>
+            <div class="hero-eyebrow">Client-side · Zero-knowledge · Open architecture</div>
+            <h1>Protect your digital identity with <span class="hl">enterprise-grade security.</span></h1>
+            <p class="hero-sub">Analyze password strength, generate secure credentials, and manage sensitive logins in an encrypted zero-knowledge vault — all computed locally in your browser. Nothing ever reaches a server.</p>
+            <div class="hero-cta">
+              <button class="btn btn-primary" onclick="rippleClick(event);document.getElementById('app').scrollIntoView({behavior:'smooth'});sw('analyzer')">Analyze Password</button>
+              <button class="btn btn-ghost" onclick="rippleClick(event);document.getElementById('app').scrollIntoView({behavior:'smooth'});sw('vault')">Open Vault</button>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="dash-preview">
+              <div class="dash-preview-head">
+                <div class="dash-dot-row"><span class="dash-dot r"></span><span class="dash-dot y"></span><span class="dash-dot g"></span></div>
+                <div class="dash-title">vaultkey · security overview</div>
+              </div>
+              <div class="dash-score-row">
+                <div class="dash-ring">
+                  <svg width="74" height="74" viewBox="0 0 74 74">
+                    <circle cx="37" cy="37" r="31" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+                    <circle cx="37" cy="37" r="31" fill="none" stroke="#22d3ee" stroke-width="6" stroke-linecap="round" stroke-dasharray="195" stroke-dashoffset="35"/>
+                  </svg>
+                  <div class="dash-ring-label"><b>82</b><small>SCORE</small></div>
+                </div>
+                <div class="dash-score-info">
+                  <b>Very strong</b>
+                  <span>Resistant to brute-force &amp; dictionary attacks</span>
+                </div>
+              </div>
+              <div class="dash-bars">
+                <div class="dash-bar-row"><span class="dash-bar-label">Entropy</span><div class="dash-bar-track"><div class="dash-bar-fill" style="width:88%;background:linear-gradient(90deg,#7c6af7,#22d3ee)"></div></div></div>
+                <div class="dash-bar-row"><span class="dash-bar-label">Length</span><div class="dash-bar-track"><div class="dash-bar-fill" style="width:75%;background:linear-gradient(90deg,#7c6af7,#22d3ee)"></div></div></div>
+                <div class="dash-bar-row"><span class="dash-bar-label">Brute force</span><div class="dash-bar-track"><div class="dash-bar-fill" style="width:96%;background:linear-gradient(90deg,#7c6af7,#22d3ee)"></div></div></div>
+              </div>
+              <div class="dash-chips">
+                <span class="dash-chip">AES-256-GCM</span>
+                <span class="dash-chip">PBKDF2 480k</span>
+                <span class="dash-chip">Encrypted ✓</span>
+              </div>
+            </div>
+            <div class="float-card fc1"><span class="fc-ic">🛡️</span> Zero-knowledge</div>
+            <div class="float-card fc2"><span class="fc-ic">🔐</span> AES-256 active</div>
+            <div class="float-card fc3"><span class="fc-ic">⚡</span> Crack time: 3M yrs</div>
           </div>
         </div>
-        <div class="stat-row">
-          <div class="stat"><div class="stat-val" id="stLen">—</div><div class="stat-key">Length</div></div>
-          <div class="stat"><div class="stat-val" id="stEnt">—</div><div class="stat-key">Entropy</div></div>
-          <div class="stat"><div class="stat-val" id="stScr">—</div><div class="stat-key">Score</div></div>
+      </section>
+    </div>
+
+    <!-- ══════════════════════ TRUST STRIP ══════════════════════ -->
+    <section class="trust-section" aria-label="Security standards">
+      <div class="trust-row">
+        <div class="trust-badge"><span class="trust-ic">🔐</span> AES-256 Encryption</div>
+        <div class="trust-badge"><span class="trust-ic">🕶️</span> Zero Knowledge Architecture</div>
+        <div class="trust-badge"><span class="trust-ic">💻</span> Client-Side Security</div>
+        <div class="trust-badge"><span class="trust-ic">🔑</span> PBKDF2 Key Derivation</div>
+        <div class="trust-badge"><span class="trust-ic">⚙️</span> WebCrypto Powered</div>
+      </div>
+    </section>
+
+    <div class="wide">
+      <!-- ══════════════════════ SECURITY METRICS DASHBOARD ══════════════════════ -->
+      <section class="section-tight" id="security">
+        <div class="section-head reveal">
+          <div class="section-eyebrow">Live security telemetry</div>
+          <h2>Your security posture, at a glance</h2>
+          <p>Every metric below is computed live in your browser as you type — entropy, crack-time, and encryption status update instantly with no network calls.</p>
         </div>
-        <div class="card" style="margin-top:12px">
-          <div class="card-label">Strength overview</div>
-          <div class="ring-wrap">
-            <svg width="88" height="88" viewBox="0 0 88 88">
-              <circle cx="44" cy="44" r="35" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
-              <circle id="ringArc" cx="44" cy="44" r="35" fill="none" stroke="#7c6af7" stroke-width="6" stroke-linecap="round"
-                stroke-dasharray="219.9" stroke-dashoffset="219.9"
-                transform="rotate(-90 44 44)" style="transition:stroke-dashoffset .55s ease,stroke .35s"/>
-              <text x="44" y="41" text-anchor="middle" fill="#fff" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="500" id="ringNum">0</text>
-              <text x="44" y="53" text-anchor="middle" fill="#7d82a8" font-family="'Inter',sans-serif" font-size="8.5">/100</text>
-            </svg>
-            <div class="ring-info">
-              <div class="ring-label" id="ringLbl">—</div>
-              <div class="ring-desc" id="ringDesc">Enter a password to see your security rating.</div>
+        <div class="metrics-grid reveal">
+          <div class="metric-card">
+            <div class="metric-top"><div class="metric-ic">🛡️</div><div class="metric-live">Live</div></div>
+            <div class="metric-val" id="liveScore">0</div>
+            <div class="metric-label">Security Score</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-top"><div class="metric-ic">🧮</div><div class="metric-live">Live</div></div>
+            <div class="metric-val" id="liveEntropy">0.0</div>
+            <div class="metric-label">Entropy (bits)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-top"><div class="metric-ic">⏱️</div><div class="metric-live">Live</div></div>
+            <div class="metric-val" id="liveCrack">—</div>
+            <div class="metric-label">Crack Time</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-top"><div class="metric-ic">🔒</div><div class="metric-live">Active</div></div>
+            <div class="metric-val" id="liveEnc" style="font-size:18px;color:var(--success)">AES-256</div>
+            <div class="metric-label">Encryption Status</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════ FEATURE SECTION ══════════════════════ -->
+      <section class="section" id="features">
+        <div class="section-head reveal">
+          <div class="section-eyebrow">What's inside</div>
+          <h2>Three tools. One security suite.</h2>
+          <p>Everything you need to harden your credential hygiene — from a single, self-contained, client-side application.</p>
+        </div>
+        <div class="feature-grid reveal">
+          <div class="feature-card" onclick="rippleClick(event);document.getElementById('app').scrollIntoView({behavior:'smooth'});sw('analyzer')">
+            <div class="feature-icon">🔍</div>
+            <h3>Password Analyzer</h3>
+            <p>Deep inspection of any password's real-world resistance to attack, scored and explained in plain language.</p>
+            <ul class="feature-list">
+              <li>Entropy analysis</li>
+              <li>Pattern &amp; sequence detection</li>
+              <li>Crack-time estimation</li>
+            </ul>
+            <button class="feature-cta">Open Analyzer →</button>
+          </div>
+          <div class="feature-card" onclick="rippleClick(event);document.getElementById('app').scrollIntoView({behavior:'smooth'});sw('generator')">
+            <div class="feature-icon">⚡</div>
+            <h3>Password Generator</h3>
+            <p>Cryptographically secure password generation with full control over length and character composition.</p>
+            <ul class="feature-list">
+              <li>Cryptographically secure generation</li>
+              <li>Custom length controls</li>
+              <li>Character set options</li>
+            </ul>
+            <button class="feature-cta">Open Generator →</button>
+          </div>
+          <div class="feature-card" onclick="rippleClick(event);document.getElementById('app').scrollIntoView({behavior:'smooth'});sw('vault')">
+            <div class="feature-icon">🔐</div>
+            <h3>Encrypted Vault</h3>
+            <p>Store and organize your credentials behind AES-256-GCM encryption, derived from a master password you control.</p>
+            <ul class="feature-list">
+              <li>Zero-knowledge architecture</li>
+              <li>Local encryption only</li>
+              <li>Secure structured storage</li>
+            </ul>
+            <button class="feature-cta">Open Vault →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════ APP TABS ══════════════════════ -->
+      <section class="app-anchor" id="app">
+        <div class="tabs-wrap reveal">
+          <div class="tabs">
+            <button class="tab on" data-t="analyzer" onclick="sw('analyzer')"><span class="tab-ic">🔍</span> Analyzer</button>
+            <button class="tab" data-t="generator" onclick="sw('generator')"><span class="tab-ic">⚡</span> Generator</button>
+            <button class="tab" data-t="vault" onclick="sw('vault')"><span class="tab-ic">🔒</span> Vault</button>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════ ANALYZER ═══════════════════════ -->
+        <div class="pane on" id="p-analyzer">
+          <div class="card card-glow" style="margin-bottom:14px">
+            <div class="card-label">Enter a password to analyze</div>
+            <div class="pw-field">
+              <label for="pwIn" class="hidden">Password to analyze</label>
+              <input type="password" class="pw-input" id="pwIn" placeholder="Type or paste a password…" autocomplete="off" spellcheck="false" oninput="onPwIn(this.value)">
+              <button class="pw-toggle" id="eyeA" onclick="togVis('pwIn','eyeA')" aria-label="Toggle password visibility">👁</button>
+            </div>
+            <div class="str-bars" role="img" aria-label="Password strength bars"><div class="str-bar" id="a1"></div><div class="str-bar" id="a2"></div><div class="str-bar" id="a3"></div><div class="str-bar" id="a4"></div><div class="str-bar" id="a5"></div></div>
+            <div class="str-meta"><span class="str-label" id="sLblA">Start typing above</span><span class="str-ent" id="entA"></span></div>
+          </div>
+
+          <div class="a-grid">
+            <div>
+              <div class="crack-card" id="crackCard">
+                <div class="crack-icon" id="crackIc">⏱</div>
+                <div>
+                  <div class="crack-time" id="crackT">—</div>
+                  <div class="crack-sub">Time to crack at 10 billion guesses / sec</div>
+                </div>
+              </div>
+              <div class="stat-row">
+                <div class="stat"><div class="stat-val" id="stLen">—</div><div class="stat-key">Length</div></div>
+                <div class="stat"><div class="stat-val" id="stEnt">—</div><div class="stat-key">Entropy</div></div>
+                <div class="stat"><div class="stat-val" id="stScr">—</div><div class="stat-key">Score</div></div>
+              </div>
+              <div class="card" style="margin-top:12px">
+                <div class="card-label">Strength overview</div>
+                <div class="ring-wrap">
+                  <svg width="88" height="88" viewBox="0 0 88 88" role="img" aria-label="Security score ring">
+                    <circle cx="44" cy="44" r="35" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
+                    <circle id="ringArc" cx="44" cy="44" r="35" fill="none" stroke="#7c6af7" stroke-width="6" stroke-linecap="round"
+                      stroke-dasharray="219.9" stroke-dashoffset="219.9"
+                      transform="rotate(-90 44 44)" style="transition:stroke-dashoffset .55s ease,stroke .35s"/>
+                    <text x="44" y="41" text-anchor="middle" fill="#fff" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="500" id="ringNum">0</text>
+                    <text x="44" y="53" text-anchor="middle" fill="#8993b8" font-family="'Inter',sans-serif" font-size="8.5">/100</text>
+                  </svg>
+                  <div class="ring-info">
+                    <div class="ring-label" id="ringLbl">—</div>
+                    <div class="ring-desc" id="ringDesc">Enter a password to see your security rating.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:12px">
+                <div class="card-label">Requirements</div>
+                <div class="check-grid" id="chkGrid">
+                  <div class="check-item" data-k="length_8"><span class="check-icon"></span>8+ characters</div>
+                  <div class="check-item" data-k="length_12"><span class="check-icon"></span>12+ characters</div>
+                  <div class="check-item" data-k="uppercase"><span class="check-icon"></span>Uppercase A–Z</div>
+                  <div class="check-item" data-k="lowercase"><span class="check-icon"></span>Lowercase a–z</div>
+                  <div class="check-item" data-k="numbers"><span class="check-icon"></span>Numbers 0–9</div>
+                  <div class="check-item" data-k="symbols"><span class="check-icon"></span>Special chars</div>
+                  <div class="check-item" data-k="no_common"><span class="check-icon"></span>Not on breach list</div>
+                  <div class="check-item" data-k="no_repeat"><span class="check-icon"></span>No repetition</div>
+                  <div class="check-item" data-k="no_sequence"><span class="check-icon"></span>No sequences</div>
+                  <div class="check-item" data-k="length_16"><span class="check-icon"></span>16+ characters</div>
+                </div>
+              </div>
+              <div class="card" id="suggCard" style="display:none">
+                <div class="card-label">How to improve</div>
+                <div class="sugg-list" id="suggList"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attack Simulation Panel -->
+          <div class="card" style="margin-top:14px">
+            <div class="card-label">Attack resistance simulation</div>
+            <div class="attack-grid" id="attackGrid">
+              <div class="attack-card">
+                <div class="attack-ic">📖</div>
+                <div class="attack-name">Dictionary Attack</div>
+                <div class="attack-bar-track"><div class="attack-bar-fill" id="atkDictBar" style="width:0%"></div></div>
+                <div class="attack-resist" id="atkDictLbl">—</div>
+              </div>
+              <div class="attack-card">
+                <div class="attack-ic">🧨</div>
+                <div class="attack-name">Brute Force</div>
+                <div class="attack-bar-track"><div class="attack-bar-fill" id="atkBruteBar" style="width:0%"></div></div>
+                <div class="attack-resist" id="atkBruteLbl">—</div>
+              </div>
+              <div class="attack-card">
+                <div class="attack-ic">🗃️</div>
+                <div class="attack-name">Credential Stuffing</div>
+                <div class="attack-bar-track"><div class="attack-bar-fill" id="atkStuffBar" style="width:0%"></div></div>
+                <div class="attack-resist" id="atkStuffLbl">—</div>
+              </div>
+              <div class="attack-card">
+                <div class="attack-ic">🧬</div>
+                <div class="attack-name">Hybrid Attack</div>
+                <div class="attack-bar-track"><div class="attack-bar-fill" id="atkHybridBar" style="width:0%"></div></div>
+                <div class="attack-resist" id="atkHybridLbl">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-strip">
+            <div class="info-card"><div class="info-ic">🧮</div><h4>Shannon entropy</h4><p>Measures password randomness using character set size × length. Each extra character multiplies crack time exponentially.</p></div>
+            <div class="info-card"><div class="info-ic">🚨</div><h4>Breach detection</h4><p>Checked against the 200 most-used passwords — fully offline. No network request is ever made during analysis.</p></div>
+            <div class="info-card"><div class="info-ic">⚡</div><h4>Crack time model</h4><p>Uses 10 billion guesses/sec — a realistic figure for a modern GPU cluster — to estimate time-to-crack from entropy.</p></div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════ GENERATOR ═══════════════════════ -->
+        <div class="pane" id="p-generator">
+          <div class="gen-layout">
+            <div>
+              <div class="card card-glow">
+                <div class="card-label">Configure</div>
+                <div class="slider-wrap">
+                  <div class="slider-label"><label for="lenSldr">Password length</label> <span id="lenLbl">16</span></div>
+                  <input type="range" min="8" max="64" step="1" value="16" id="lenSldr" oninput="document.getElementById('lenLbl').textContent=this.value;genPw()">
+                </div>
+                <div class="toggle-row"><label for="tgU">Uppercase <span class="tlbl-char">A–Z</span></label><label class="tog"><input type="checkbox" id="tgU" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
+                <div class="toggle-row"><label for="tgL">Lowercase <span class="tlbl-char">a–z</span></label><label class="tog"><input type="checkbox" id="tgL" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
+                <div class="toggle-row"><label for="tgN">Numbers <span class="tlbl-char">0–9</span></label><label class="tog"><input type="checkbox" id="tgN" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
+                <div class="toggle-row" style="margin-bottom:0"><label for="tgS">Symbols <span class="tlbl-char">!@#$…</span></label><label class="tog"><input type="checkbox" id="tgS" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
+                <button class="btn btn-primary" style="width:100%;margin-top:16px;justify-content:center" onclick="rippleClick(event);genPw()">⚡ Generate new</button>
+              </div>
+            </div>
+            <div>
+              <div class="card card-glow" style="margin-bottom:12px">
+                <div class="card-label">Generated password</div>
+                <div class="gen-output" id="genOut"><span style="color:var(--hint);font-family:var(--sans);font-size:13px;letter-spacing:0">Hit Generate →</span><button class="gen-copy" id="genCpy" onclick="cpyGen()" style="display:none">Copy</button></div>
+              </div>
+              <div class="card" id="genACard" style="display:none;margin-bottom:12px">
+                <div class="card-label">Strength analysis</div>
+                <div class="str-bars" role="img" aria-label="Generated password strength bars"><div class="str-bar" id="g1"></div><div class="str-bar" id="g2"></div><div class="str-bar" id="g3"></div><div class="str-bar" id="g4"></div><div class="str-bar" id="g5"></div></div>
+                <div class="str-meta" style="margin-bottom:14px"><span class="str-label" id="sLblG"></span><span class="str-ent" id="entG"></span></div>
+                <div class="crack-card" style="margin-bottom:14px">
+                  <div class="crack-icon" id="crackIcG">⏱</div>
+                  <div><div class="crack-time" id="crackTG">—</div><div class="crack-sub">Estimated crack time</div></div>
+                </div>
+                <button class="btn btn-teal" style="width:100%;justify-content:center" onclick="useInVault()">🔒 Save to vault</button>
+              </div>
+              <div class="card">
+                <div class="card-label">Generation history</div>
+                <div class="gen-history" id="genHistory">
+                  <div class="gen-hist-empty">Generated passwords will appear here</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="card" style="margin-bottom:12px">
-          <div class="card-label">Requirements</div>
-          <div class="check-grid" id="chkGrid">
-            <div class="check-item" data-k="length_8"><span class="check-icon"></span>8+ characters</div>
-            <div class="check-item" data-k="length_12"><span class="check-icon"></span>12+ characters</div>
-            <div class="check-item" data-k="uppercase"><span class="check-icon"></span>Uppercase A–Z</div>
-            <div class="check-item" data-k="lowercase"><span class="check-icon"></span>Lowercase a–z</div>
-            <div class="check-item" data-k="numbers"><span class="check-icon"></span>Numbers 0–9</div>
-            <div class="check-item" data-k="symbols"><span class="check-icon"></span>Special chars</div>
-            <div class="check-item" data-k="no_common"><span class="check-icon"></span>Not on breach list</div>
-            <div class="check-item" data-k="no_repeat"><span class="check-icon"></span>No repetition</div>
-            <div class="check-item" data-k="no_sequence"><span class="check-icon"></span>No sequences</div>
-            <div class="check-item" data-k="length_16"><span class="check-icon"></span>16+ characters</div>
-          </div>
-        </div>
-        <div class="card" id="suggCard" style="display:none">
-          <div class="card-label">How to improve</div>
-          <div class="sugg-list" id="suggList"></div>
-        </div>
-      </div>
-    </div>
 
-    <div class="info-strip">
-      <div class="info-card"><div class="info-ic">🧮</div><h4>Shannon entropy</h4><p>Measures password randomness using character set size × length. Each extra character multiplies crack time exponentially.</p></div>
-      <div class="info-card"><div class="info-ic">🚨</div><h4>Breach detection</h4><p>Checked against the 200 most-used passwords — fully offline. No network request is ever made during analysis.</p></div>
-      <div class="info-card"><div class="info-ic">⚡</div><h4>Crack time model</h4><p>Uses 10 billion guesses/sec — a realistic figure for a modern GPU cluster — to estimate time-to-crack from entropy.</p></div>
-    </div>
-  </div>
+        <!-- ═══════════════════════ VAULT ═══════════════════════ -->
+        <div class="pane" id="p-vault">
+          <div id="vLock">
+            <div class="vault-lock card card-glow">
+              <div class="vault-hero">
+                <div class="vault-icon">🔐</div>
+                <h2>Secure password vault</h2>
+                <p>AES-256-GCM encrypted. PBKDF2 key derivation with 480,000 iterations. Everything stays in your browser — no accounts, no servers, no cloud.</p>
+              </div>
+              <div class="mode-tabs">
+                <button class="mode-tab on" id="mtU" onclick="setVM('unlock')">Unlock existing</button>
+                <button class="mode-tab" id="mtC" onclick="setVM('create')">Create new</button>
+              </div>
 
-  <!-- ═══════════════════════ GENERATOR ═══════════════════════ -->
-  <div class="pane" id="p-generator">
-    <div class="gen-layout">
-      <div>
-        <div class="card card-glow">
-          <div class="card-label">Configure</div>
-          <div class="slider-wrap">
-            <div class="slider-label">Password length <span id="lenLbl">16</span></div>
-            <input type="range" min="8" max="64" step="1" value="16" id="lenSldr" oninput="document.getElementById('lenLbl').textContent=this.value;genPw()">
-          </div>
-          <div class="toggle-row"><label for="tgU">Uppercase <span class="tlbl-char">A–Z</span></label><label class="tog"><input type="checkbox" id="tgU" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
-          <div class="toggle-row"><label for="tgL">Lowercase <span class="tlbl-char">a–z</span></label><label class="tog"><input type="checkbox" id="tgL" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
-          <div class="toggle-row"><label for="tgN">Numbers <span class="tlbl-char">0–9</span></label><label class="tog"><input type="checkbox" id="tgN" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
-          <div class="toggle-row" style="margin-bottom:0"><label for="tgS">Symbols <span class="tlbl-char">!@#$…</span></label><label class="tog"><input type="checkbox" id="tgS" checked onchange="genPw()"><span class="tog-slider"></span></label></div>
-          <button class="btn btn-primary" style="width:100%;margin-top:16px;justify-content:center" onclick="genPw()">⚡ Generate new</button>
-        </div>
-      </div>
-      <div>
-        <div class="card card-glow" style="margin-bottom:12px">
-          <div class="card-label">Generated password</div>
-          <div class="gen-output" id="genOut"><span style="color:var(--hint);font-family:var(--sans);font-size:13px;letter-spacing:0">Hit Generate →</span><button class="gen-copy" id="genCpy" onclick="cpyGen()" style="display:none">Copy</button></div>
-        </div>
-        <div class="card" id="genACard" style="display:none">
-          <div class="card-label">Strength analysis</div>
-          <div class="str-bars"><div class="str-bar" id="g1"></div><div class="str-bar" id="g2"></div><div class="str-bar" id="g3"></div><div class="str-bar" id="g4"></div><div class="str-bar" id="g5"></div></div>
-          <div class="str-meta" style="margin-bottom:14px"><span class="str-label" id="sLblG"></span><span class="str-ent" id="entG"></span></div>
-          <div class="crack-card" style="margin-bottom:14px">
-            <div class="crack-icon" id="crackIcG">⏱</div>
-            <div><div class="crack-time" id="crackTG">—</div><div class="crack-sub">Estimated crack time</div></div>
-          </div>
-          <button class="btn btn-teal" style="width:100%;justify-content:center" onclick="useInVault()">🔒 Save to vault</button>
-        </div>
-      </div>
-    </div>
-  </div>
+              <div id="vUF">
+                <div class="form-group"><label class="form-label" for="vIdIn">Vault ID</label><input type="text" class="form-input" id="vIdIn" placeholder="Paste your vault ID…" autocomplete="off"></div>
+                <div class="form-group"><label class="form-label" for="mPwIn">Master password</label>
+                  <div class="pw-group"><input type="password" class="form-input" id="mPwIn" placeholder="Enter master password…" onkeydown="if(event.key==='Enter')unlockV()"><button class="pw-toggle" onclick="togVis('mPwIn',null)" aria-label="Toggle password visibility">👁</button></div>
+                </div>
+                <div class="form-error" id="unlockErr"></div>
+                <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="rippleClick(event);unlockV()">Unlock vault</button>
+              </div>
 
-  <!-- ═══════════════════════ VAULT ═══════════════════════ -->
-  <div class="pane" id="p-vault">
-    <div id="vLock">
-      <div class="vault-lock card card-glow">
-        <div class="vault-hero">
-          <div class="vault-icon">🔐</div>
-          <h2>Secure password vault</h2>
-          <p>AES-256-GCM encrypted. PBKDF2 key derivation with 480,000 iterations. Everything stays in your browser — no accounts, no servers, no cloud.</p>
-        </div>
-        <div class="mode-tabs">
-          <button class="mode-tab on" id="mtU" onclick="setVM('unlock')">Unlock existing</button>
-          <button class="mode-tab" id="mtC" onclick="setVM('create')">Create new</button>
-        </div>
+              <div id="vCF" class="hidden">
+                <div class="form-group">
+                  <label class="form-label" for="nMPw">Master password</label>
+                  <div class="pw-group"><input type="password" class="form-input" id="nMPw" placeholder="Choose a strong password…" oninput="chkMaster(this.value)"><button class="pw-toggle" onclick="togVis('nMPw',null)" aria-label="Toggle password visibility">👁</button></div>
+                  <div class="mpw-str">
+                    <div class="str-bars" role="img" aria-label="Master password strength bars"><div class="str-bar" id="m1"></div><div class="str-bar" id="m2"></div><div class="str-bar" id="m3"></div><div class="str-bar" id="m4"></div><div class="str-bar" id="m5"></div></div>
+                    <div class="str-meta"><span class="str-label" id="mStr" style="font-size:11px">Enter master password</span></div>
+                  </div>
+                </div>
+                <div class="form-group"><label class="form-label" for="vHint">Hint (optional)</label><input type="text" class="form-input" id="vHint" placeholder="A memorable hint — not the actual password"></div>
+                <div class="form-error" id="createErr"></div>
+                <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="rippleClick(event);createV()">Create vault</button>
+              </div>
 
-        <div id="vUF">
-          <div class="form-group"><label class="form-label">Vault ID</label><input type="text" class="form-input" id="vIdIn" placeholder="Paste your vault ID…" autocomplete="off"></div>
-          <div class="form-group"><label class="form-label">Master password</label>
-            <div class="pw-group"><input type="password" class="form-input" id="mPwIn" placeholder="Enter master password…" onkeydown="if(event.key==='Enter')unlockV()"><button class="pw-toggle" onclick="togVis('mPwIn',null)">👁</button></div>
-          </div>
-          <div class="form-error" id="unlockErr"></div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="unlockV()">Unlock vault</button>
-        </div>
-
-        <div id="vCF" class="hidden">
-          <div class="form-group">
-            <label class="form-label">Master password</label>
-            <div class="pw-group"><input type="password" class="form-input" id="nMPw" placeholder="Choose a strong password…" oninput="chkMaster(this.value)"><button class="pw-toggle" onclick="togVis('nMPw',null)">👁</button></div>
-            <div class="mpw-str">
-              <div class="str-bars"><div class="str-bar" id="m1"></div><div class="str-bar" id="m2"></div><div class="str-bar" id="m3"></div><div class="str-bar" id="m4"></div><div class="str-bar" id="m5"></div></div>
-              <div class="str-meta"><span class="str-label" id="mStr" style="font-size:11px">Enter master password</span></div>
+              <div id="vCreated" class="hidden" style="margin-top:16px">
+                <div style="font-size:12px;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="color:var(--emerald)">✓</span> Vault created. Save your vault ID:</div>
+                <div class="vault-id-box"><div class="vault-id-inner"><div class="vault-id-lbl">Vault ID</div><div class="vault-id-val" id="newVid"></div></div><button class="btn-icon" onclick="cpyVid()" aria-label="Copy vault ID">📋</button></div>
+                <div class="vault-id-warn">⚠️ You need this ID every time you unlock. Save it somewhere safe — it can't be recovered.</div>
+                <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="enterVault()">Enter vault →</button>
+              </div>
             </div>
           </div>
-          <div class="form-group"><label class="form-label">Hint (optional)</label><input type="text" class="form-input" id="vHint" placeholder="A memorable hint — not the actual password"></div>
-          <div class="form-error" id="createErr"></div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="createV()">Create vault</button>
-        </div>
 
-        <div id="vCreated" class="hidden" style="margin-top:16px">
-          <div style="font-size:12px;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="color:var(--emerald)">✓</span> Vault created. Save your vault ID:</div>
-          <div class="vault-id-box"><div class="vault-id-inner"><div class="vault-id-lbl">Vault ID</div><div class="vault-id-val" id="newVid"></div></div><button class="btn-icon" onclick="cpyVid()">📋</button></div>
-          <div class="vault-id-warn">⚠️ You need this ID every time you unlock. Save it somewhere safe — it can't be recovered.</div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="enterVault()">Enter vault →</button>
+          <div id="vDash" class="hidden">
+            <div class="vault-header">
+              <div class="vault-title">
+                <div style="font-size:28px">🔐</div>
+                <div><div class="vault-title-text">My vault</div><div class="vault-meta" id="vMeta">Unlocked</div></div>
+              </div>
+              <div class="vault-actions">
+                <button class="btn btn-ghost btn-sm" onclick="saveVP()">💾 Save</button>
+                <button class="btn btn-ghost btn-sm" onclick="lockV()">🔒 Lock</button>
+              </div>
+            </div>
+
+            <!-- Vault Overview -->
+            <div class="vault-overview">
+              <div class="vo-card"><div class="vo-val" id="voTotal">0</div><div class="vo-label">Total Credentials</div></div>
+              <div class="vo-card"><div class="vo-val c-success" id="voStrong">0</div><div class="vo-label">Strong Passwords</div></div>
+              <div class="vo-card"><div class="vo-val c-danger" id="voWeak">0</div><div class="vo-label">Weak Passwords</div></div>
+              <div class="vo-card"><div class="vo-val" id="voUpdated" style="font-size:13px;padding-top:4px">—</div><div class="vo-label">Last Updated</div></div>
+            </div>
+
+            <!-- Insights Panel -->
+            <div class="card insights-panel">
+              <div class="card-label">Security insights</div>
+              <div id="insightsBody"><div class="insight-empty">Add entries to see security insights.</div></div>
+            </div>
+
+            <div class="search-row">
+              <div class="search-wrap"><span class="search-icon">🔍</span><label for="vSrch" class="hidden">Search vault</label><input type="text" class="search-input" id="vSrch" placeholder="Search by site or username…" oninput="filtE(this.value)"></div>
+              <label for="vSort" class="hidden">Sort entries</label>
+              <select class="sort-select" id="vSort" onchange="sortAndRender()">
+                <option value="recent">Sort: Most recent</option>
+                <option value="site">Sort: Site name (A–Z)</option>
+                <option value="strength_asc">Sort: Weakest first</option>
+                <option value="strength_desc">Sort: Strongest first</option>
+              </select>
+            </div>
+            <div class="entry-list" id="eList"></div>
+            <button class="btn btn-primary" style="margin-top:14px;width:100%;justify-content:center" onclick="openAddM()">+ Add password</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════ FAQ ══════════════════════ -->
+      <section class="section" id="faq">
+        <div class="section-head reveal">
+          <div class="section-eyebrow">Questions</div>
+          <h2>Frequently asked questions</h2>
+          <p>Everything you need to know about how VaultKey protects your data.</p>
+        </div>
+        <div class="faq-list reveal">
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">How is my data encrypted?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Every vault entry is encrypted with AES-256-GCM using a key derived from your master password via PBKDF2 with 480,000 iterations and a unique random salt. This all happens locally using the browser's native WebCrypto API — your plaintext passwords are never sent anywhere.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">What is zero-knowledge security?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Zero-knowledge means VaultKey itself never has access to your master password or unencrypted vault contents. Only an encrypted blob is stored in your browser's local storage — without your master password, that blob is computationally meaningless.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">Can VaultKey access my passwords?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><div class="faq-a-inner">No. There are no servers involved at any point. All analysis, generation, and encryption/decryption runs entirely client-side in your browser. We have no mechanism to view, transmit, or recover your stored credentials.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">What happens if I forget my master password?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Your vault cannot be recovered. Because of the zero-knowledge design, there is no password reset path or backdoor — the encryption key is derived solely from your master password. Store it somewhere safe, such as a physical note or another password manager.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">Is my data stored online?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><div class="faq-a-inner">No. Your encrypted vault blob is saved only in this browser's local storage on this device. It does not sync to any cloud service. Clearing your browser data or switching devices means the vault stays where it was created.</div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ══════════════════════ FOOTER ══════════════════════ -->
+    <footer class="site-footer" id="about">
+      <div class="wide">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand">
+              <svg width="32" height="32" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M19 2 L34 8 V18 C34 27 27 33.5 19 36 C11 33.5 4 27 4 18 V8 Z" fill="url(#logoGrad)" opacity="0.16"/>
+                <path d="M19 2 L34 8 V18 C34 27 27 33.5 19 36 C11 33.5 4 27 4 18 V8 Z" stroke="url(#logoGrad)" stroke-width="1.6" fill="none"/>
+                <circle cx="19" cy="16.5" r="5" fill="none" stroke="url(#logoGrad)" stroke-width="1.8"/>
+                <path d="M19 21 L19 27" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M19 24 L22.5 24" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M19 27 L21.5 27" stroke="url(#logoGrad)" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              <span class="brand-name">Vault<span>Key</span></span>
+            </div>
+            <p class="footer-about">Enterprise-grade password intelligence and secure credential management. All encryption runs locally in your browser — passwords are never transmitted anywhere.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#about">About</a></li>
+              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#main">Contact</a></li>
+              <li><a href="#main">Careers</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Features</h4>
+            <ul>
+              <li><a href="#app" onclick="sw('analyzer')">Password Analyzer</a></li>
+              <li><a href="#app" onclick="sw('generator')">Password Generator</a></li>
+              <li><a href="#app" onclick="sw('vault')">Encrypted Vault</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Security</h4>
+            <ul>
+              <li><a href="#security">Security Overview</a></li>
+              <li><a href="#faq">Zero-Knowledge Design</a></li>
+              <li><a href="#faq">Encryption Details</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 VaultKey. All rights reserved.</p>
+          <div class="footer-chips">
+            <span class="footer-chip">AES-256-GCM</span>
+            <span class="footer-chip">PBKDF2-SHA256</span>
+            <span class="footer-chip">480,000 iterations</span>
+            <span class="footer-chip">WebCrypto API</span>
+            <span class="footer-chip">Zero server</span>
+          </div>
         </div>
       </div>
-    </div>
+    </footer>
 
-    <div id="vDash" class="hidden">
-      <div class="vault-header">
-        <div class="vault-title">
-          <div style="font-size:28px">🔐</div>
-          <div><div class="vault-title-text">My vault</div><div class="vault-meta" id="vMeta">Unlocked</div></div>
-        </div>
-        <div class="vault-actions">
-          <button class="btn btn-ghost btn-sm" onclick="saveVP()">💾 Save</button>
-          <button class="btn btn-ghost btn-sm" onclick="lockV()">🔒 Lock</button>
-        </div>
-      </div>
-      <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" id="vSrch" placeholder="Search by site or username…" oninput="filtE(this.value)"></div>
-      <div class="entry-list" id="eList"></div>
-      <button class="btn btn-primary" style="margin-top:14px;width:100%;justify-content:center" onclick="openAddM()">+ Add password</button>
-    </div>
-  </div>
-
-  <footer>
-    <div class="ft-chips">
-      <span class="ft-chip">AES-256-GCM</span>
-      <span class="ft-chip">PBKDF2-SHA256</span>
-      <span class="ft-chip">480,000 iterations</span>
-      <span class="ft-chip">WebCrypto API</span>
-      <span class="ft-chip">Zero server</span>
-      <span class="ft-chip">No tracking</span>
-    </div>
-    <p>VaultKey — all encryption runs in your browser. Passwords are never transmitted anywhere.</p>
-  </footer>
+  </main>
 </div>
 
 <!-- ═══ ADD MODAL ═══ -->
 <div class="overlay" id="addOv">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add password</div><button class="modal-close" onclick="closeM('addOv')">✕</button></div>
+    <div class="modal-header"><div class="modal-title">Add password</div><button class="modal-close" onclick="closeM('addOv')" aria-label="Close">✕</button></div>
     <div><div class="form-label" style="margin-bottom:7px">Icon</div><div class="icon-picker" id="iPick"></div><input type="hidden" id="selIco" value="🔒"></div>
-    <div class="form-group"><label class="form-label">Site / app *</label><input type="text" class="form-input" id="eSite" placeholder="GitHub, Gmail, Bank…"></div>
-    <div class="form-group"><label class="form-label">Username or email</label><input type="text" class="form-input" id="eUser" placeholder="you@example.com"></div>
+    <div class="form-group"><label class="form-label" for="eSite">Site / app *</label><input type="text" class="form-input" id="eSite" placeholder="GitHub, Gmail, Bank…"></div>
+    <div class="form-group"><label class="form-label" for="eUser">Username or email</label><input type="text" class="form-input" id="eUser" placeholder="you@example.com"></div>
     <div class="form-group">
-      <label class="form-label">Password</label>
-      <div class="pw-group"><input type="password" class="form-input" id="ePw" placeholder="Enter or paste…" oninput="chkEPw(this.value)"><button class="pw-toggle" onclick="togVis('ePw',null)">👁</button></div>
-      <div class="str-bars" style="margin:7px 0 3px"><div class="str-bar" id="e1"></div><div class="str-bar" id="e2"></div><div class="str-bar" id="e3"></div><div class="str-bar" id="e4"></div><div class="str-bar" id="e5"></div></div>
+      <label class="form-label" for="ePw">Password</label>
+      <div class="pw-group"><input type="password" class="form-input" id="ePw" placeholder="Enter or paste…" oninput="chkEPw(this.value)"><button class="pw-toggle" onclick="togVis('ePw',null)" aria-label="Toggle password visibility">👁</button></div>
+      <div class="str-bars" role="img" aria-label="New entry password strength bars" style="margin:7px 0 3px"><div class="str-bar" id="e1"></div><div class="str-bar" id="e2"></div><div class="str-bar" id="e3"></div><div class="str-bar" id="e4"></div><div class="str-bar" id="e5"></div></div>
       <div class="str-meta"><span class="str-label" id="eStr" style="font-size:11px"></span></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="eNotes" placeholder="Recovery code, 2FA info…"></div>
+    <div class="form-group"><label class="form-label" for="eNotes">Notes</label><input type="text" class="form-input" id="eNotes" placeholder="Recovery code, 2FA info…"></div>
     <div class="form-error" id="addErr"></div>
     <div style="display:flex;gap:8px;margin-top:4px">
       <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeM('addOv')">Cancel</button>
@@ -526,7 +1002,7 @@ footer .ft-chip{font-size:10px;padding:3px 9px;border-radius:99px;background:var
 <!-- ═══ VIEW MODAL ═══ -->
 <div class="overlay" id="viewOv">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title" id="viewT">Details</div><button class="modal-close" onclick="closeM('viewOv')">✕</button></div>
+    <div class="modal-header"><div class="modal-title" id="viewT">Details</div><button class="modal-close" onclick="closeM('viewOv')" aria-label="Close">✕</button></div>
     <div id="viewB"></div>
   </div>
 </div>
@@ -534,9 +1010,9 @@ footer .ft-chip{font-size:10px;padding:3px 9px;border-radius:99px;background:var
 <!-- ═══ SAVE MODAL ═══ -->
 <div class="overlay" id="saveOv">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">Save vault</div><button class="modal-close" onclick="closeM('saveOv')">✕</button></div>
+    <div class="modal-header"><div class="modal-title">Save vault</div><button class="modal-close" onclick="closeM('saveOv')" aria-label="Close">✕</button></div>
     <p style="font-size:12px;color:var(--dim);margin-bottom:16px;line-height:1.65">Your vault will be re-encrypted with a fresh random salt and stored in this browser's localStorage.</p>
-    <div class="form-group"><label class="form-label">Confirm master password</label><input type="password" class="form-input" id="savePw" placeholder="Master password…" onkeydown="if(event.key==='Enter')doSave()"></div>
+    <div class="form-group"><label class="form-label" for="savePw">Confirm master password</label><input type="password" class="form-input" id="savePw" placeholder="Master password…" onkeydown="if(event.key==='Enter')doSave()"></div>
     <div class="form-error" id="saveErr"></div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeM('saveOv')">Cancel</button>
@@ -551,12 +1027,12 @@ footer .ft-chip{font-size:10px;padding:3px 9px;border-radius:99px;background:var
 /* ─── Constants ─── */
 const COMMON=new Set(["password","123456","password123","admin","letmein","welcome","monkey","dragon","master","qwerty","1234","12345","123456789","1234567890","password1","iloveyou","sunshine","princess","football","shadow","superman","michael","jessica","password2","hello","charlie","donald","654321","qwertyuiop","123123","batman","trustno1","abc123","pass","login","admin123","test","guest","root","user","changeme","pass123","1q2w3e","qazwsx","asdfgh","zxcvbn","111111","000000","1111","12341234","11111111","123321","1234567","aaaaaa","qwert","zxcvbnm","asdfghjkl","ninja","dragon123","baseball","soccer","hockey","google","apple","amazon","facebook","twitter","linkedin","instagram","loveme","babygirl","anthony","cookie","daniel","jessica1","nicole","letmein1","secret","hunter","pepper","maggie","sunshine1","princess1"]);
 const ICONS=['🔒','🌐','💼','📧','💳','🏦','🎮','🛒','📱','💻','🏠','🎵','📷','✈️','🎓','💊'];
-const COLORS={vw:'#f87171',wk:'#fb923c',fr:'#facc15',st:'#4ade80',vs:'#34d399'};
+const COLORS={vw:'#ef4444',wk:'#f59e0b',fr:'#facc15',st:'#22c55e',vs:'#34d399'};
 const ICONS_BY={vw:'⚡',wk:'🔓',fr:'⚠️',st:'🛡',vs:'🏰'};
 const DESCS={vw:'Extremely vulnerable. Change this immediately.',wk:'Weak — easy to crack with basic dictionary attacks.',fr:'Moderate security. Several improvements recommended.',st:'Good protection against most automated attacks.',vs:'Excellent — highly resistant to brute-force attacks.'};
 
 /* ─── State ─── */
-let vEntries=[],vId=null,vMasterHash=null,genPwd='',debounce=null,selIco='🔒',revealMap={};
+let vEntries=[],vId=null,vMasterHash=null,genPwd='',debounce=null,selIco='🔒',revealMap={},genHist=[];
 
 /* ─── Tab switch ─── */
 function sw(t){
@@ -641,6 +1117,66 @@ function togVis(id,bid){
 }
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+/* ─── Ripple effect ─── */
+function rippleClick(e){
+  const btn=e.currentTarget;
+  const circle=document.createElement('span');
+  const d=Math.max(btn.clientWidth,btn.clientHeight);
+  const rect=btn.getBoundingClientRect();
+  circle.className='ripple';
+  circle.style.width=circle.style.height=d+'px';
+  circle.style.left=(e.clientX-rect.left-d/2)+'px';
+  circle.style.top=(e.clientY-rect.top-d/2)+'px';
+  btn.appendChild(circle);
+  setTimeout(()=>circle.remove(),650);
+}
+
+/* ─── Attack simulation ─── */
+function updateAttackSim(a){
+  if(!a){
+    ['Dict','Brute','Stuff','Hybrid'].forEach(k=>{
+      document.getElementById('atk'+k+'Bar').style.width='0%';
+      document.getElementById('atk'+k+'Bar').style.background='var(--plate3)';
+      document.getElementById('atk'+k+'Lbl').textContent='—';
+    });
+    return;
+  }
+  const resColor=v=>v<20?COLORS.vw:v<40?COLORS.wk:v<60?COLORS.fr:v<80?COLORS.st:COLORS.vs;
+  const resLabel=v=>v<20?'Very low':v<40?'Low':v<60?'Moderate':v<80?'High':'Very high';
+  // Dictionary attack: heavily penalized by common-password / repetition / sequence checks
+  let dict=a.score;
+  if(!a.checks.no_common)dict=Math.min(dict,8);
+  if(!a.checks.no_sequence)dict=Math.max(0,dict-20);
+  dict=Math.max(0,Math.min(100,dict));
+  // Brute force: closely tracks entropy-derived score
+  const brute=Math.max(0,Math.min(100,a.score));
+  // Credential stuffing: depends on uniqueness signals (length + symbol variety), not affected by breach list as harshly
+  let stuff=Math.round((a.checks.length_12?40:15)+(a.checks.symbols?20:0)+(a.checks.numbers?10:0)+(a.checks.uppercase?10:0)+(a.entropy/100*20));
+  stuff=Math.max(0,Math.min(100,stuff));
+  // Hybrid: average of dict and brute, slightly reduced
+  const hybrid=Math.max(0,Math.min(100,Math.round((dict+brute)/2*0.9)));
+  const vals={Dict:dict,Brute:brute,Stuff:stuff,Hybrid:hybrid};
+  Object.keys(vals).forEach(k=>{
+    const v=vals[k];
+    document.getElementById('atk'+k+'Bar').style.width=v+'%';
+    document.getElementById('atk'+k+'Bar').style.background=resColor(v);
+    document.getElementById('atk'+k+'Lbl').textContent=resLabel(v)+' resistance';
+  });
+}
+
+/* ─── Live security metrics dashboard ─── */
+function updateLiveMetrics(a){
+  const scoreEl=document.getElementById('liveScore'),entEl=document.getElementById('liveEntropy'),crackEl=document.getElementById('liveCrack');
+  if(!scoreEl)return;
+  if(!a){
+    scoreEl.textContent='0';entEl.textContent='0.0';crackEl.textContent='—';
+    return;
+  }
+  scoreEl.textContent=a.score;
+  entEl.textContent=a.entropy.toFixed(1);
+  crackEl.textContent=a.crack;
+}
+
 /* ─── Analyzer ─── */
 function onPwIn(pw){clearTimeout(debounce);debounce=setTimeout(()=>runA(pw),80);}
 function runA(pw){
@@ -662,6 +1198,8 @@ function runA(pw){
   const sc=document.getElementById('suggCard'),sl=document.getElementById('suggList');
   if(a.suggestions.length){sl.innerHTML=a.suggestions.map(s=>`<div class="sugg-item">${esc(s)}</div>`).join('');sc.style.display='block';}
   else sc.style.display='none';
+  updateAttackSim(a);
+  updateLiveMetrics(a);
 }
 function resetA(){
   [1,2,3,4,5].forEach(i=>{const b=document.getElementById('a'+i);if(b)b.className='str-bar';});
@@ -673,6 +1211,8 @@ function resetA(){
   document.getElementById('ringLbl').textContent='—';document.getElementById('ringDesc').textContent='Enter a password to see your security rating.';
   document.getElementById('suggCard').style.display='none';
   document.querySelectorAll('#chkGrid .check-item').forEach(el=>el.classList.remove('ok'));
+  updateAttackSim(null);
+  updateLiveMetrics(null);
 }
 
 /* ─── Generator ─── */
@@ -697,6 +1237,27 @@ function genPw(){
   document.getElementById('genACard').style.display='block';
   const a=analyze(genPwd);
   if(a){setStr(a,'g','sLblG','entG');document.getElementById('crackTG').textContent=a.crack;document.getElementById('crackIcG').textContent=ICONS_BY[a.color]||'⏱';}
+  addToHistory(genPwd,a);
+}
+function addToHistory(pw,a){
+  if(!pw||!a)return;
+  genHist.unshift({pw,score:a.score,color:a.color,label:a.label});
+  if(genHist.length>8)genHist.pop();
+  renderHistory();
+}
+function renderHistory(){
+  const el=document.getElementById('genHistory');
+  if(!el)return;
+  if(!genHist.length){el.innerHTML='<div class="gen-hist-empty">Generated passwords will appear here</div>';return;}
+  el.innerHTML=genHist.map((h,i)=>`<div class="gen-hist-item">
+    <span class="gen-hist-dot" style="background:${COLORS[h.color]||'#7c6af7'}"></span>
+    <span class="gen-hist-pw">${esc(h.pw)}</span>
+    <button class="btn-icon" style="width:24px;height:24px;font-size:11px" onclick="cpyHist(${i})" title="Copy" aria-label="Copy password">📋</button>
+  </div>`).join('');
+}
+function cpyHist(i){
+  const h=genHist[i];if(!h)return;
+  navigator.clipboard.writeText(h.pw).then(()=>toast('Password copied to clipboard'));
 }
 function cpyGen(){
   if(!genPwd)return;
@@ -767,7 +1328,7 @@ function enterVault(){
   document.getElementById('vLock').style.display='none';
   document.getElementById('vDash').classList.remove('hidden');
   document.getElementById('vMeta').textContent='Unlocked · '+vEntries.length+' entries';
-  renderEntries(vEntries);
+  sortAndRender();
 }
 async function unlockV(){
   const id=document.getElementById('vIdIn').value.trim(),pw=document.getElementById('mPwIn').value;
@@ -781,7 +1342,7 @@ async function unlockV(){
     document.getElementById('vLock').style.display='none';
     document.getElementById('vDash').classList.remove('hidden');
     document.getElementById('vMeta').textContent='Unlocked · '+vEntries.length+' entries';
-    renderEntries(vEntries);toast('Vault unlocked!');
+    sortAndRender();toast('Vault unlocked!');
   }catch{err.textContent='Wrong master password.';err.classList.add('show');}
 }
 function lockV(){
@@ -807,14 +1368,66 @@ function renderEntries(list){
       <div class="entry-right">
         <div class="str-badge"><div class="str-dot c-${c}"></div><div class="str-badge-lbl">${scLabel(e.strength||0)}</div></div>
         <div class="entry-btns">
-          <button class="btn-icon" onclick="event.stopPropagation();cpyPw('${e.id}')" title="Copy password">📋</button>
-          <button class="btn-icon danger" onclick="event.stopPropagation();delEntry('${e.id}')" title="Delete">🗑</button>
+          <button class="btn-icon" onclick="event.stopPropagation();cpyPw('${e.id}')" title="Copy password" aria-label="Copy password">📋</button>
+          <button class="btn-icon danger" onclick="event.stopPropagation();delEntry('${e.id}')" title="Delete" aria-label="Delete entry">🗑</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
-function filtE(q){renderEntries(q?vEntries.filter(e=>e.site.toLowerCase().includes(q.toLowerCase())||(e.username||'').toLowerCase().includes(q.toLowerCase())):vEntries);}
+function filtE(q){
+  const term=(q||'').toLowerCase();
+  const base=term?vEntries.filter(e=>e.site.toLowerCase().includes(term)||(e.username||'').toLowerCase().includes(term)):vEntries;
+  renderEntries(sortEntries(base));
+}
+function sortEntries(list){
+  const mode=document.getElementById('vSort')?document.getElementById('vSort').value:'recent';
+  const arr=list.slice();
+  switch(mode){
+    case 'site': arr.sort((a,b)=>a.site.localeCompare(b.site));break;
+    case 'strength_asc': arr.sort((a,b)=>(a.strength||0)-(b.strength||0));break;
+    case 'strength_desc': arr.sort((a,b)=>(b.strength||0)-(a.strength||0));break;
+    default: arr.sort((a,b)=>(b.created||0)-(a.created||0));
+  }
+  return arr;
+}
+function sortAndRender(){
+  const q=document.getElementById('vSrch')?document.getElementById('vSrch').value:'';
+  filtE(q);
+  updateVaultOverview();
+}
+function updateVaultOverview(){
+  const total=vEntries.length;
+  const strong=vEntries.filter(e=>(e.strength||0)>=60).length;
+  const weak=vEntries.filter(e=>(e.strength||0)<40).length;
+  document.getElementById('voTotal').textContent=total;
+  document.getElementById('voStrong').textContent=strong;
+  document.getElementById('voWeak').textContent=weak;
+  const last=vEntries.reduce((m,e)=>Math.max(m,e.created||0),0);
+  document.getElementById('voUpdated').textContent=last?new Date(last*1000).toLocaleDateString():'—';
+  renderInsights();
+}
+function renderInsights(){
+  const body=document.getElementById('insightsBody');
+  if(!body)return;
+  const rows=[];
+  // Reused passwords
+  const byPw={};
+  vEntries.forEach(e=>{if(e.password){byPw[e.password]=(byPw[e.password]||0)+1;}});
+  const reused=Object.values(byPw).filter(c=>c>1).length;
+  if(reused>0)rows.push({ic:'♻️',html:`<b>${reused}</b> password${reused>1?'s are':' is'} reused across multiple entries`});
+  // Weak entries
+  const weakList=vEntries.filter(e=>(e.strength||0)<40);
+  if(weakList.length>0)rows.push({ic:'⚠️',html:`<b>${weakList.length}</b> entr${weakList.length>1?'ies':'y'} ${weakList.length>1?'have':'has'} weak passwords and should be updated`});
+  // Old passwords (90+ days)
+  const now=Math.floor(Date.now()/1000);
+  const old=vEntries.filter(e=>e.created&&(now-e.created)>90*86400);
+  if(old.length>0)rows.push({ic:'🕰️',html:`<b>${old.length}</b> entr${old.length>1?'ies':'y'} ${old.length>1?'have not':'has not'} been updated in over 90 days`});
+  // All clear
+  if(vEntries.length>0&&rows.length===0)rows.push({ic:'✅',html:`All <b>${vEntries.length}</b> credentials look healthy — no reuse, weak entries, or stale passwords detected`});
+  if(vEntries.length===0){body.innerHTML='<div class="insight-empty">Add entries to see security insights.</div>';return;}
+  body.innerHTML=rows.map(r=>`<div class="insight-row"><span class="insight-ic">${r.ic}</span><span class="insight-text">${r.html}</span></div>`).join('');
+}
 function viewEntry(id){
   const e=vEntries.find(x=>x.id===id);if(!e)return;
   const c=scColor(e.strength||0);
@@ -824,12 +1437,12 @@ function viewEntry(id){
       <div style="font-size:34px">${e.icon||'🔒'}</div>
       <div><div style="font-size:16px;font-weight:600;color:#fff">${esc(e.site)}</div><div style="font-size:11px;color:var(--dim)">Added ${new Date((e.created||0)*1000).toLocaleDateString()}</div></div>
     </div>
-    <div class="form-group"><label class="form-label">Username</label><div style="display:flex;gap:6px"><input type="text" class="form-input" value="${esc(e.username||'')}" readonly style="flex:1;cursor:default"><button class="btn-icon" onclick="navigator.clipboard.writeText('${esc(e.username||'')}').then(()=>toast('Copied!'))">📋</button></div></div>
+    <div class="form-group"><label class="form-label">Username</label><div style="display:flex;gap:6px"><input type="text" class="form-input" value="${esc(e.username||'')}" readonly style="flex:1;cursor:default"><button class="btn-icon" onclick="navigator.clipboard.writeText('${esc(e.username||'')}').then(()=>toast('Copied!'))" aria-label="Copy username">📋</button></div></div>
     <div class="form-group"><label class="form-label">Password</label>
       <div style="display:flex;gap:6px">
         <input type="password" class="form-input" value="${esc(e.password)}" readonly style="flex:1;cursor:default;font-family:var(--mono)" id="vpw_${e.id}">
-        <button class="btn-icon" onclick="revealPw('${e.id}')">👁</button>
-        <button class="btn-icon" onclick="cpyPw('${e.id}')">📋</button>
+        <button class="btn-icon" onclick="revealPw('${e.id}')" aria-label="Reveal password">👁</button>
+        <button class="btn-icon" onclick="cpyPw('${e.id}')" aria-label="Copy password">📋</button>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px"><div class="str-dot c-${c}"></div><span style="font-size:11px;color:var(--dim)">${scLabel(e.strength||0)} · ${e.strength||0}/100</span></div>
     </div>
@@ -840,7 +1453,8 @@ function revealPw(id){const el=document.getElementById('vpw_'+id);if(el)el.type=
 function cpyPw(id){const e=vEntries.find(x=>x.id===id);if(e)navigator.clipboard.writeText(e.password).then(()=>toast('Password copied!'));}
 function delEntry(id){
   if(!confirm('Delete this entry?'))return;
-  vEntries=vEntries.filter(e=>e.id!==id);renderEntries(vEntries);
+  vEntries=vEntries.filter(e=>e.id!==id);
+  sortAndRender();
   document.getElementById('vMeta').textContent='Unlocked · '+vEntries.length+' entries';
   toast('Entry deleted');
 }
@@ -865,7 +1479,7 @@ function addEntry(){
   if(!pw){err.textContent='Password is required.';err.classList.add('show');return;}
   const a=analyze(pw);
   vEntries.push({id:randId(),site,username,password:pw,notes,icon:selIco,strength:a?a.score:0,label:a?a.label:'',created:Math.floor(Date.now()/1000)});
-  renderEntries(vEntries);
+  sortAndRender();
   document.getElementById('vMeta').textContent='Unlocked · '+vEntries.length+' entries';
   closeM('addOv');toast('Password added to vault!');
 }
@@ -890,8 +1504,38 @@ function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));});
 
+/* ─── FAQ accordion ─── */
+function toggleFaq(btn){
+  const item=btn.parentElement;
+  const ans=item.querySelector('.faq-a');
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(o=>{
+    if(o!==item){o.classList.remove('open');o.querySelector('.faq-a').style.maxHeight=null;o.querySelector('.faq-q').setAttribute('aria-expanded','false');}
+  });
+  if(wasOpen){
+    item.classList.remove('open');ans.style.maxHeight=null;btn.setAttribute('aria-expanded','false');
+  }else{
+    item.classList.add('open');ans.style.maxHeight=ans.scrollHeight+'px';btn.setAttribute('aria-expanded','true');
+  }
+}
+
+/* ─── Navbar scroll effect ─── */
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  navbar.classList.toggle('scrolled',window.scrollY>10);
+},{passive:true});
+
+/* ─── Scroll reveal ─── */
+const revealEls=document.querySelectorAll('.reveal');
+const revealObs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');revealObs.unobserve(en.target);}});
+},{threshold:0.12});
+revealEls.forEach(el=>revealObs.observe(el));
+
 /* ─── Init ─── */
 genPw();
+updateLiveMetrics(null);
+updateAttackSim(null);
 </script>
 </body>
 </html>
